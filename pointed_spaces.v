@@ -90,10 +90,15 @@ Variable mfunext : forall (X Y : Type) (f g : X -> Y),
       (forall x, f x = g x) -> f = g.
 *)
 
-Lemma pt_dumb : forall f : pt_map pt_unit A, pr1 f = pr1 pt_initial.
+Lemma pt_initiality_pr1 : 
+     forall f : pt_map pt_unit A, pr1 f = pr1 pt_initial.
 Proof.
   intro f.
-  apply (strong_to_naive_funext_dep  strong_funext_dep ). 
+  
+  set (H := strong_to_naive_funext strong_funext _ _ 
+            (pr1 f) (pr1 pt_initial)).
+  apply H.
+(*  apply (strong_to_naive_funext_dep  strong_funext_dep ). *)
   intro x.
   induction x. 
   apply (pt_map_point f).
@@ -112,9 +117,14 @@ Proof.
     induction x. 
     apply (pt_map_point f).
 *)
-  apply (@total_path _ _ _ _ (pt_dumb f)).
-  rewrite transport_happly_dep.
-  unfold pt_dumb.
+  apply (@total_path _ _ _ _ (pt_initiality_pr1 f)).
+  rewrite transport_happly.
+  unfold pt_initiality_pr1.
+  rewrite strong_funext_compute.
+  simpl.
+  unfold pt_map_point.
+  apply opposite_left_inverse.
+Defined.
   transitivity (
      ! (happly_dep (
   unfold pt_dumb.
