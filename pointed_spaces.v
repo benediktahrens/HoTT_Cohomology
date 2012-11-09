@@ -94,12 +94,9 @@ Lemma pt_initiality_pr1 :
      forall f : pt_map pt_unit A, pr1 f = pr1 pt_initial.
 Proof.
   intro f.
-  
-  set (H := strong_to_naive_funext strong_funext _ _ 
+  apply (strong_to_naive_funext strong_funext _ _ 
             (pr1 f) (pr1 pt_initial)).
-  apply H.
-(*  apply (strong_to_naive_funext_dep  strong_funext_dep ). *)
-  intro x.
+  intro x;
   induction x. 
   apply (pt_map_point f).
 Defined.
@@ -109,14 +106,6 @@ Lemma pt_intiality : is_contr (pt_map pt_unit A).
 Proof.
   exists pt_initial.
   intro f.
-(*
-  assert (H : pr1 f = pr1 pt_initial).
-    simpl.
-    apply strong_funext. 
-    intro x.
-    induction x. 
-    apply (pt_map_point f).
-*)
   apply (@total_path _ _ _ _ (pt_initiality_pr1 f)).
   rewrite transport_happly.
   unfold pt_initiality_pr1.
@@ -125,31 +114,87 @@ Proof.
   unfold pt_map_point.
   apply opposite_left_inverse.
 Defined.
-  transitivity (
-     ! (happly_dep (
-  unfold pt_dumb.
-  simpl.
-  rewrite strong_funext_dep_compute.
-  
-  apply opposite_left_inverse.
-  Check (pr2 pt_initial).
-  simpl.
-  Check H.
-  Check (pr2 f). 
-  Check 
-  Print happly.
-  set (H' := happly H tt).
-  simpl in H'.
-  transitivity (
-  rewrite trans_trivial.
-  induction H.
-  
 
 
-Variable f : pt_map pt_unit A.
+Lemma pt_terminality_pr1 : 
+     forall f : pt_map A pt_unit, pr1 f = pr1 pt_terminal.
+Proof.
+  intro f.
+  apply (strong_to_naive_funext strong_funext _ _ _ _ ).
+(*            (pr1 f) (pr1 pt_terminal)). *)
+  intro x. 
+  apply (pr2 unit_contr).
+Defined.
 
+Lemma pt_terminality : is_contr (pt_map A pt_unit).
+Proof.
+  exists pt_terminal.
+  intro f.
+  apply (@total_path _ _ _ _ (pt_terminality_pr1 _ )).
+  rewrite transport_happly.
+  unfold pt_terminality_pr1.
+  rewrite strong_funext_compute.
+  apply (contr_path2).  
+  exact unit_contr.
+Defined.
 
+End initial_terminal.
 
+End pt_unit_initial_terminal.
+
+Section smash_product.
+
+Variables A B : pt_type.
+Print prod_rect.
+Print map_dep.
+Record smash_data : Type := {
+  smash_carrier : Type ;
+  smash_pair : forall a : A , forall b : B, smash_carrier ;
+  contr_1 : forall a : A, 
+     smash_pair a (point B) = smash_pair (point A) (point B) ;
+  contr_2 : forall b : B, 
+     smash_pair (point A) b = smash_pair (point A) (point B) ;
+  smash_rec : forall (P : smash_carrier -> Type) 
+     (d : forall (a : A) (b : B), P (smash_pair a b))
+     (H_1 : forall a : A, 
+       transport (contr_1 a) (d a (point B)) = 
+             d (point A) (point B)) 
+     (H_2 : forall b : B, 
+       transport (contr_2 b) (d (point A) b) = 
+             d (point A) (point B)) ,
+
+       forall ab : smash_carrier, P ab  
+   ;
+  smash_comp_pair : forall (P : smash_carrier -> Type) 
+     (d : forall (a : A) (b : B), P (smash_pair a b))
+     (H_1 : forall a : A, 
+       transport (contr_1 a) (d a (point B)) = 
+             d (point A) (point B)) 
+     (H_2 : forall b : B, 
+       transport (contr_2 b) (d (point A) b) = 
+             d (point A) (point B)) ,
+     forall a : A, forall b : B,
+     smash_rec  H_1 H_2 (smash_pair a b) =
+           d a b
+;
+   smash_comp_contr_1 : forall (P : smash_carrier -> Type) 
+     (d : forall (a : A) (b : B), P (smash_pair a b))
+     (H_1 : forall a : A, 
+       transport (contr_1 a) (d a (point B)) = 
+             d (point A) (point B)) 
+     (H_2 : forall b : B, 
+       transport (contr_2 b) (d (point A) b) = 
+             d (point A) (point B)) ,
+     forall a : A,
+     map_dep (smash_rect H_1 H_2 (smash_pair a (point B))) (contr_1 a) =
+          
+}.
+
+Definition smash (d : smash_data) : pt_type :=
+  {| carrier := smash_carrier d ; 
+     point := smash_pair _ (point A) (point B) |}.
+
+End smash_product.
 
 
 
