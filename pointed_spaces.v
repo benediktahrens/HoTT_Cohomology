@@ -20,13 +20,20 @@ Record pt_map_record (A B : pt_type) := {
 Definition pt_map (A B : pt_type) := 
    {f : A -> B & f (point A) = point B}.
 
+
+
 Module Import pt_map_notation.
 
 Notation "A .-> B" := (pt_map A B) (at level 55).
 
 End pt_map_notation.
 
+Definition pt_map_null (A B : pt_type) : A .-> B := 
+  existT _ (fun _ : A => point B) idpath .
 
+Definition pt_map_pt (A B : pt_type) : pt_type := {|
+   carrier := A .-> B ;
+   point := pt_map_null A B |}.
 
 Definition pt_map_carrier (A B : pt_type) (f : pt_map A B) : A -> B :=
    projT1 f.
