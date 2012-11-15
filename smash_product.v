@@ -137,18 +137,7 @@ Definition smash (X : smash_data) : pt_type := {|
 |}.
 
 
-Definition smash_pr1_map (X : smash_data) : smash X -> A.
-Proof.
-  apply (smash_elim_simp  
-                    (f := fun a _ => a)
-                    (Ya := point A)
-                    (Yb := point A)).
-  
-  intro a.
-  Check (contract_1 X a).
-  rewrite (contract_1 X).
-  simpl.
-   
+
 
 
 (*
