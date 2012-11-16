@@ -36,6 +36,7 @@ Definition pt_map_pt (A B : pt_type) : pt_type := {|
    carrier := A .-> B ;
    point := pt_map_null A B |}.
 
+
 Definition pt_map_carrier (A B : pt_type) (f : pt_map A B) : A -> B :=
    projT1 f.
 
