@@ -25,6 +25,7 @@ Definition pt_map (A B : pt_type) :=
 Module Import pt_map_notation.
 
 Notation "A .-> B" := (pt_map A B) (at level 55).
+(*Notation "A '_o'" := (point A) (at level 4).*)
 
 End pt_map_notation.
 

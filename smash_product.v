@@ -123,16 +123,36 @@ Proof.
                     (d_base_2 := Yb)
                       ).
   intro a.
-  rewrite  (Ha a).
+  rewrite (Ha a).
   apply trans_trivial.
   intro b.
   rewrite (Hb b).
   apply trans_trivial.
 Defined.
 
+Section smash_elim_simp_rules.
+Variable X : smash_data.
+Variables     (Y : pt_type) 
+     (f : forall (a : A) (b : B), Y) 
+     (Ya Yb : Y)
+     (Ha : forall a : A, f a (point B) = Ya)
+     (Hb : forall b : B, f (point A) b = Yb).
+
+Lemma smash_elim_simp_pair : forall a b,
+  @smash_elim_simp X _ f _ _ Ha Hb (smash_pair X a b) = f a b.
+Proof.
+  intros a b.
+  apply  (@smash_comp_pair X (fun _ => Y) f Ya Yb).
+Defined.
+
+
+
+End smash_elim_simp_rules.
+
+
 
 Definition smash (X : smash_data) : pt_type := {|
-   carrier := smash_carrier X ; 
+   carrier := (* smash_carrier *) X ; 
    point := smash_pair X (point A) (point B) 
 |}.
 
@@ -192,3 +212,7 @@ Definition smash (d : smash_data) : pt_type :=
 *)
 
 End smash_product.
+
+
+
+
