@@ -1,6 +1,7 @@
 
 
 Require Import HoTT.Homotopy.
+Require Import tactics.
 Require Import ExtensionalityAxiom.
 
 Set Implicit Arguments.
@@ -70,9 +71,8 @@ Lemma transport_happly : forall (H : pr1 f = pr1 g),
   transport (P:= fun f : A -> B => f(point A) = point B) H p
     = !(happly H (point A)) @ p.
 Proof.
-  intros H.
-  induction H.
-  simpl.
+  intro p.
+  induction p.
   reflexivity.
 Defined.
 
@@ -81,9 +81,8 @@ Lemma transport_happly_dep : forall (H : pr1 f = pr1 g),
   transport (P:= fun f : A -> B => f(point A) = point B) H p
     = !(happly_dep H (point A)) @ p.
 Proof.
-  intros H.
-  induction H.
-  simpl.
+  intro p.
+  induction p.
   reflexivity.
 Defined.
 
@@ -97,10 +96,10 @@ Section pt_unit_initial_terminal.
 Variable A : pt_type.
 
 Definition pt_initial : pt_unit .-> A := 
-   (fun _ => point A ; identity_refl).
+   (fun _ => point A ; idpath).
 
 Definition pt_terminal : A .-> pt_unit := 
-  (fun (a : A) => tt (*point pt_unit*) ; identity_refl).
+  (fun (a : A) => tt (*point pt_unit*) ; idpath).
 
 Section initial_terminal.
 (*
@@ -125,7 +124,8 @@ Proof.
   exists pt_initial.
   intro f.
   apply (@total_path _ _ _ _ (pt_initiality_pr1 f)).
-  rewrite transport_happly.
+  pathvia (! (happly (pt_initiality_pr1 f) (point pt_unit)) @ pr2 f).
+  apply transport_happly.
   unfold pt_initiality_pr1.
   rewrite strong_funext_compute.
   simpl.

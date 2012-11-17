@@ -4,6 +4,7 @@ Unset Strict Implicit.
 
 Require Import HoTT.Homotopy.
 Require Import pointed_spaces.
+Require Import tactics.
 
 Import pt_map_notation.
 
@@ -123,10 +124,12 @@ Proof.
                     (d_base_2 := Yb)
                       ).
   intro a.
-  rewrite (Ha a).
+  pathvia (transport (P:=fun _ : X => Y)(contract_1 X a) Ya).
+  apply (map _ (Ha a)).
   apply trans_trivial.
   intro b.
-  rewrite (Hb b).
+  pathvia (transport (P:=fun _ : X => Y)(contract_2 X b) Yb).
+  apply (map _ (Hb b)).
   apply trans_trivial.
 Defined.
 

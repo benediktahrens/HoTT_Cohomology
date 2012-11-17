@@ -5,6 +5,7 @@ Require Import HoTT.Homotopy.
 Require Import ExtensionalityAxiom.
 Require Import pointed_spaces.
 Require Import smash_product.
+Require Import tactics.
 
 Import pt_map_notation.
 Import smash_notation.
@@ -26,20 +27,14 @@ apply (smash_elim_simp
 intro a.
 apply (pr2 (f a)).
 intro b.
-set (H:=pr2 f).
-simpl in H.
-unfold pt_map_null in H.
-set (H':= base_path H).
-simpl in H'.
-set (H2 := happly H').
-simpl in H2.
-apply H2.
+apply (happly (base_path (pr2 f))).
 Defined.
 
-Definition hom_to_smash_adj : smash AB .-> C.
+Definition smash_uncurry : smash AB .-> C.
 exists out_of_smash_carrier.
 simpl.
 unfold out_of_smash_carrier.
+
 rewrite smash_elim_simp_pair.
 apply (pr2 (f (point A))).
 Defined.
@@ -82,6 +77,25 @@ apply opposite_left_inverse.
 Defined. 
 
 End into_hom_from_out_of_smash.
+
+Lemma curry_after_uncurry : forall f : A .-> pt_map_pt B C,
+  pr1 (smash_curry (smash_uncurry f)) = pr1 f.
+Proof.
+intro f.
+simpl.
+apply (strong_to_naive_funext strong_funext _ _ _ ).
+intro a.
+unfold curry_carrier.
+  simpl.
+rewrite smash_elim_sipm
+simpl.
+
+Lemma curry_after_uncurry : forall f : A .-> pt_map_pt B C,
+  smash_curry (smash_uncurry f) = f.
+Proof.
+intro f.
+
+
 
 End maps_in_each_direction.
 
