@@ -157,7 +157,31 @@ Definition smash (X : smash_data) : pt_type := {|
 |}.
 
 
+(** a path from (a, b0) to (a0,b0)  *)
+
+Definition edge_connected_1 (X : smash_data) (a : A) :
+  smash_pair _ a (point B) = smash_pair X (point A)(point B).
+transitivity (base_1 X).
+apply (contract_1 X a).
+apply (! contract_1 X _).
+Defined.
+
+Definition edge_connected_2 (X : smash_data) (b : B) :
+  smash_pair _ (point A) b = smash_pair X (point A)(point B).
+transitivity (base_2 X).
+apply (contract_2 X _ ).
+apply (! contract_2 _ _ ).
+Defined.
+
+
 End smash_product.
+
+Module Import smash_notation.
+
+Notation "< a , b >" := (smash_pair _ a b) 
+ (at level 40, B at next level, left associativity).
+
+End smash_notation.
 
 Section smash_product_functorial.
 
@@ -171,7 +195,7 @@ Variable CD : smash_data C D.
 
 Definition smashf_carrier : smash AB -> smash CD.
 apply (@smash_elim_simp _ _ AB (smash CD)
-        (fun a b => smash_pair CD (pr1 f a) (pr1 g b))
+        (fun a b => smash_pair _ (pr1 f a) (pr1 g b) )
         (base_1 CD)
         (base_2 CD)
 ).
