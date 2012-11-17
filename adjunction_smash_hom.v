@@ -52,10 +52,9 @@ Variable f : smash AB .-> C.
 
 Definition curry_carrier (a : A) : B .-> C.
  exists (fun b => f (smash_pair _ a b)).
- transitivity (f (smash_pair _ (point A)(point B))).
+ apply (concat (y:=f (smash_pair _ (point A)(point B)))).
  - apply (map f (edge_connected_1 _ _ )).
- - rewrite <- (pr2 f).
-   reflexivity.
+ - apply (pr2 f).
 Defined.
 
 Lemma smash_curry_pr1 : 
@@ -63,10 +62,9 @@ Lemma smash_curry_pr1 :
 simpl.
   apply (strong_to_naive_funext strong_funext _ _ _ ).
   intro x.
-  transitivity (f (smash_pair _ (point A)(point B))).
+   apply (concat (y:=f (smash_pair _ (point A)(point B)))).
    apply (map f (edge_connected_2 _ _ )).
-   rewrite <- (pr2 f).
-   reflexivity.
+   apply (pr2 f).
 Defined.
 
 Definition smash_curry : A .-> (pt_map_pt B  C).
@@ -74,20 +72,14 @@ exists curry_carrier.
 apply (total_path (p:=smash_curry_pr1)).
 rewrite transport_happly.
 unfold smash_curry_pr1.
-rewrite strong_funext_compute. 
- simpl.
-
-
-(* this fails; do i have correct paths above? *)
+rewrite strong_funext_compute.
+rewrite edge_connected_2_refl.
+simpl.
+rewrite edge_connected_1_refl.
+rewrite idpath_map.
+rewrite idpath_left_unit.
 apply opposite_left_inverse.
-  rewrite trans_trivial.
-            (pr1 f) (pr1 pt_initial)).
-apply funext.
-unfold curry_carrier. simpl.
-
-End carrier.
-
-
+Defined. 
 
 End into_hom_from_out_of_smash.
 

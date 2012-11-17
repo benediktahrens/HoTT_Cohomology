@@ -161,17 +161,31 @@ Definition smash (X : smash_data) : pt_type := {|
 
 Definition edge_connected_1 (X : smash_data) (a : A) :
   smash_pair _ a (point B) = smash_pair X (point A)(point B).
-transitivity (base_1 X).
+apply (concat (y:=base_1 X)).
 apply (contract_1 X a).
 apply (! contract_1 X _).
 Defined.
 
+Lemma edge_connected_1_refl (X : smash_data) :
+   edge_connected_1 X (point A) = idpath.
+Proof.
+  unfold edge_connected_1.
+  apply opposite_right_inverse.
+Qed.
+
 Definition edge_connected_2 (X : smash_data) (b : B) :
   smash_pair _ (point A) b = smash_pair X (point A)(point B).
-transitivity (base_2 X).
+apply (concat (y:=base_2 X)).
 apply (contract_2 X _ ).
 apply (! contract_2 _ _ ).
 Defined.
+
+Lemma edge_connected_2_refl (X : smash_data) :
+   edge_connected_2 X (point B) = idpath.
+Proof.
+  unfold edge_connected_2.
+  apply opposite_right_inverse.
+Qed.
 
 
 End smash_product.
