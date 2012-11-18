@@ -149,7 +149,9 @@ Proof.
   exists pt_terminal.
   intro f.
   apply (@total_path _ _ _ _ (pt_terminality_pr1 _ )).
-  rewrite transport_happly.
+(*  rewrite transport_happly. *)
+  pathvia (! (happly (pt_terminality_pr1 f) (point A)) @ pr2 f).
+  apply transport_happly. 
   unfold pt_terminality_pr1.
   rewrite strong_funext_compute.
   apply (contr_path2).  

@@ -35,7 +35,9 @@ exists out_of_smash_carrier.
 simpl.
 unfold out_of_smash_carrier.
 
-rewrite smash_elim_simp_pair.
+(* rewrite smash_elim_simp_pair. *)
+pathvia (pr1 (f (point A)) (point B)).
+apply smash_elim_simp_pair.
 apply (pr2 (f (point A))).
 Defined.
 
@@ -66,8 +68,11 @@ Definition smash_curry : A .-> (pt_map_pt B  C).
 exists curry_carrier.
 apply (total_path (p:=smash_curry_pr1)).
 rewrite transport_happly.
-unfold smash_curry_pr1.
-rewrite strong_funext_compute.
+pathvia (! happly smash_curry_pr1 (point B) @ 
+            pr2 (curry_carrier (point A))).
+reflexivity.
+unfold smash_curry_pr1. 
+rewrite strong_funext_compute. 
 rewrite edge_connected_2_refl.
 simpl.
 rewrite edge_connected_1_refl.
@@ -78,6 +83,20 @@ Defined.
 
 End into_hom_from_out_of_smash.
 
+Lemma curry_after_uncurry_pr1 :
+  forall f : A .-> pt_map_pt B C,
+  forall a : A,
+paths (pr1 (curry_carrier (smash_uncurry f) a)) (pr1 (pr1 f a)).
+Proof.
+ intro f.
+ intro a.
+apply (strong_to_naive_funext strong_funext _ _ _ ).
+intro b.
+simpl.
+unfold out_of_smash_carrier.
+apply smash_elim_simp_pair.
+Defined.
+
 Lemma curry_after_uncurry : forall f : A .-> pt_map_pt B C,
   pr1 (smash_curry (smash_uncurry f)) = pr1 f.
 Proof.
@@ -85,8 +104,52 @@ intro f.
 simpl.
 apply (strong_to_naive_funext strong_funext _ _ _ ).
 intro a.
-unfold curry_carrier.
+assert (H: pr1 (curry_carrier (smash_uncurry f) a) =
+           pr1 (pr1 f a)).
+apply (strong_to_naive_funext strong_funext _ _ _ ).
+intro b.
+simpl.
+unfold out_of_smash_carrier.
+apply smash_elim_simp_pair.
+apply (total_path (p:=curry_after_uncurry_pr1 f a)).
+(* rewrite transport_happly. *)
+pathvia (! (happly (curry_after_uncurry_pr1 f a) (point B)) @
+   pr2 (curry_carrier (smash_uncurry f) a)).
+apply transport_happly.
+unfold curry_after_uncurry_pr1.
+rewrite strong_funext_compute.
+
+unfold smash_elim_simp_pair.
+Check (smash_elim_simp_pair).
+rewrite 
+pathvia (! (happly H (point B)) @ 
+      pr2 (curry_carrier (smash_uncurry f) a)).
+apply transport_happly.
+unfold H.
+simpl.
+  Check (pr2 (pr1 f a)).
+  unfold smash_elim_simp_pair.
   simpl.
+  simpl.
+  rewrite 
+rewrite transport_happly.
+unfold curry_carrier.
+assert (H: (fun b : B => (smash_uncurry f) (smash_pair AB a b))
+            = pr1 (pr1 f a)).
+apply (strong_to_naive_funext strong_funext _ _ _ ).
+intro b.
+simpl.
+unfold out_of_smash_carrier.
+apply smash_elim_simp_pair.
+  Check (pr1 f a).
+
+assert (H' : pr1 (fun b : B => (smash_uncurry f) (smash_pair AB a b);
+  map (smash_uncurry f) (edge_connected_1 AB a) @ pr2 (smash_uncurry f))
+      = pr1 (pr1 f a)).
+apply (total_path (p:= H)).
+
+simpl.
+  
 rewrite smash_elim_sipm
 simpl.
 

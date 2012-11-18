@@ -217,10 +217,13 @@ apply (@smash_elim_simp _ _ AB (smash CD)
         (base_2 CD)
 ).
 - intro a.
-  rewrite (pr2 g).
+(*  rewrite (pr2 g). *)
+  pathvia (smash_pair CD (pr1 f a)(point D)).
+  apply (map _ (pr2 g)).
   apply (contract_1).
 - intro b.
-  rewrite (pr2 f).
+  rewrite (pr2 f). 
+(*  pathvia (smash_pair CD (point C)(pr1 g b)). *)
   apply contract_2.
 Defined.
 
@@ -232,8 +235,9 @@ change (point (smash AB)) with
 rewrite smash_elim_simp_pair.
 change (point (smash CD)) with
      (smash_pair CD (point C) (point D)).
+pathvia (smash_pair CD (pr1 f (point A)) (point D)).
+apply (map _ (pr2 g)).
 rewrite (pr2 f).
-rewrite (pr2 g).
 reflexivity.
 Defined.
 
