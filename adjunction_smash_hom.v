@@ -17,7 +17,7 @@ Variable AB : smash_data A B.
 
 Section out_of_smash_from_into_hom.
 
-Variable f : pt_map A (pt_map_pt B C).
+Variable f : A .-> (pt_map_pt B C).
 
 Definition out_of_smash_carrier : smash AB -> C.
 apply (smash_elim_simp 
@@ -67,6 +67,7 @@ Defined.
 Definition smash_curry : A .-> (pt_map_pt B  C).
 exists curry_carrier.
 apply (total_path (p:=smash_curry_pr1)).
+Check pr2 (curry_carrier (point A)).
 rewrite transport_happly.
 pathvia (! happly smash_curry_pr1 (point B) @ 
             pr2 (curry_carrier (point A))).
@@ -118,7 +119,7 @@ pathvia (! (happly (curry_after_uncurry_pr1 f a) (point B)) @
 apply transport_happly.
 unfold curry_after_uncurry_pr1.
 rewrite strong_funext_compute.
-
+simpl.
 unfold smash_elim_simp_pair.
 Check (smash_elim_simp_pair).
 rewrite 
