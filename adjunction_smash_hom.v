@@ -34,8 +34,6 @@ Definition smash_uncurry : smash AB .-> C.
 exists out_of_smash_carrier.
 simpl.
 unfold out_of_smash_carrier.
-
-(* rewrite smash_elim_simp_pair. *)
 pathvia (pr1 (f (point A)) (point B)).
 apply smash_elim_simp_pair.
 apply (pr2 (f (point A))).
@@ -59,7 +57,7 @@ Lemma smash_curry_pr1 :
 simpl.
   apply (strong_to_naive_funext strong_funext _ _ _ ).
   intro x.
-   apply (concat (y:=f (smash_pair _ (point A)(point B)))).
+   pathvia (f (smash_pair _ (point A)(point B))).
    apply (map f (edge_connected_2 _ _ )).
    apply (pr2 f).
 Defined.
@@ -67,19 +65,33 @@ Defined.
 Definition smash_curry : A .-> (pt_map_pt B  C).
 exists curry_carrier.
 apply (total_path (p:=smash_curry_pr1)).
-Check pr2 (curry_carrier (point A)).
-rewrite transport_happly.
+(*Check pr2 (curry_carrier (point A)).
+rewrite transport_happly. *)
 pathvia (! happly smash_curry_pr1 (point B) @ 
             pr2 (curry_carrier (point A))).
-reflexivity.
+apply transport_happly.
 unfold smash_curry_pr1. 
-rewrite strong_funext_compute. 
+rewrite strong_funext_compute.
+(* 
 rewrite edge_connected_2_refl.
 simpl.
-rewrite edge_connected_1_refl.
-rewrite idpath_map.
-rewrite idpath_left_unit.
-apply opposite_left_inverse.
+*)
+pathvia (! (pr2 f) @ map f (edge_connected_1 AB (point A)) @ pr2 f).
+- apply whisker_right.
+  apply map.
+  change (pr2 f) with (idpath @ pr2 f) at 2.
+  apply whisker_right.
+  simpl.
+  change (idpath _ ) with
+          (map f (idpath (smash_pair AB (point A)(point B)) )).
+  apply map. apply edge_connected_2_refl.
+- simpl. 
+  pathvia (! (pr2 f) @ pr2 f).
+  apply whisker_left.
+  change (pr2 f) with (map f (idpath _) @ pr2 f) at 2.
+  apply whisker_right.
+  apply map. apply edge_connected_1_refl.
+  apply opposite_left_inverse.
 Defined. 
 
 End into_hom_from_out_of_smash.
