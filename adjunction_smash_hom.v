@@ -1,6 +1,6 @@
 Set Implicit Arguments.
 Unset Strict Implicit.
-
+Set Printing Implicit Defensive.
 Require Import HoTT.Homotopy.
 Require Import ExtensionalityAxiom.
 Require Import pointed_spaces.
@@ -95,6 +95,76 @@ pathvia (! (pr2 f) @ map f (edge_connected_1 AB (point A)) @ pr2 f).
 Defined. 
 
 End into_hom_from_out_of_smash.
+
+Section uncurry_after_curry.
+
+Variable f : smash AB .-> C.
+
+Lemma uncurry_after_curry_pair :
+     forall a b,
+     pr1 (smash_uncurry (smash_curry f)) (smash_pair AB a b) = 
+             pr1 f (smash_pair AB a b).
+Proof.
+  intros a b.
+  apply smash_elim_simp_pair.
+Defined.
+
+Lemma uncurry_after_curry_base_1:
+     pr1 (smash_uncurry (smash_curry f)) (base_1 AB) = 
+             pr1 f (base_1 AB).
+Proof.
+  unfold smash_uncurry.
+  simpl.
+  unfold out_of_smash_carrier.
+  pathvia (point C).
+  + apply smash_elim_simp_base_1.
+  + pathvia (pr1 f (smash_pair AB (point A)(point B))).
+    - apply (!pr2 f).
+    - apply map.
+      apply contract_1.
+Defined. 
+
+Lemma uncurry_after_curry_base_2:
+     pr1 (smash_uncurry (smash_curry f)) (base_2 AB) = 
+             pr1 f (base_2 AB).
+Proof.
+  unfold smash_uncurry.
+  simpl.
+  unfold out_of_smash_carrier.
+  pathvia (point C).
+  + apply smash_elim_simp_base_2.
+  + pathvia (pr1 f (smash_pair AB (point A)(point B))).
+    - apply (!pr2 f).
+    - apply map.
+      apply contract_2.
+Defined. 
+
+Lemma uncurry_after_curry :
+     pr1 (smash_uncurry (smash_curry f)) = pr1 f.
+Proof.
+  simpl.
+  apply (strong_to_naive_funext strong_funext _ _ _ ).
+  simpl.
+Check smash_elim.
+  intro x.
+  apply (@smash_elim A B AB (fun x =>  
+             out_of_smash_carrier (smash_curry f) x = pr1 f x)
+        uncurry_after_curry_pair
+        uncurry_after_curry_base_1
+        uncurry_after_curry_base_2). 
+  intro a.
+  unfold uncurry_after_curry_base_1.
+  unfold uncurry_after_curry_pair.
+  simpl.
+  
+  apply 
+
+
+Lemma uncurry_after_curry : forall f : smash AB .-> C,
+     smash_uncurry (smash_curry f) = f.
+Proof.
+ intro f.
+  
 
 Lemma curry_after_uncurry_pr1 :
   forall f : A .-> pt_map_pt B C,

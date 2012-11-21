@@ -134,7 +134,9 @@ Proof.
 Defined.
 
 Section smash_elim_simp_rules.
+
 Variable X : smash_data.
+
 Variables     (Y : pt_type) 
      (f : forall (a : A) (b : B), Y) 
      (Ya Yb : Y)
@@ -148,7 +150,24 @@ Proof.
   apply  (@smash_comp_pair X (fun _ => Y) f Ya Yb).
 Defined.
 
+Lemma smash_elim_simp_base_1 : 
+  @smash_elim_simp X _ f _ _ Ha Hb (base_1 X) = Ya.
+Proof.
+  apply (@smash_comp_base_1 X (fun _ => Y) f Ya Yb).
+Defined.
 
+Lemma smash_elim_simp_base_2 : 
+  @smash_elim_simp X _ f _ _ Ha Hb (base_2 X) = Yb.
+Proof.
+  apply (@smash_comp_base_2 X (fun _ => Y) f Ya Yb).
+Defined.
+
+
+(*
+Lemma smash_elim_simp_contract_1 :
+   forall a : A, 
+  map (@smash_elim_simp X _ f _ _ Ha Hb) (contract_1 a) = 
+*)
 
 End smash_elim_simp_rules.
 
