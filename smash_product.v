@@ -5,6 +5,7 @@ Unset Strict Implicit.
 Require Import HoTT.Homotopy.
 Require Import pointed_spaces.
 Require Import tactics.
+Require Import some_lemmas.
 
 Import pt_map_notation.
 
@@ -183,7 +184,8 @@ Definition smash (X : smash_data) : pt_type := {|
 
 Definition edge_connected_1 (X : smash_data) (a : A) :
   smash_pair _ a (point B) = smash_pair X (point A)(point B).
-apply (concat (y:=base_1 X)).
+pathvia (base_1 X).
+(*apply (concat (y:=base_1 X)).*)
 apply (contract_1 X a).
 apply (! contract_1 X _).
 Defined.
@@ -191,13 +193,13 @@ Defined.
 Lemma edge_connected_1_refl (X : smash_data) :
    edge_connected_1 X (point A) = idpath.
 Proof.
-  unfold edge_connected_1.
+(*  unfold edge_connected_1. *)
   apply opposite_right_inverse.
 Qed.
 
 Definition edge_connected_2 (X : smash_data) (b : B) :
   smash_pair _ (point A) b = smash_pair X (point A)(point B).
-apply (concat (y:=base_2 X)).
+pathvia (base_2 X).
 apply (contract_2 X _ ).
 apply (! contract_2 _ _ ).
 Defined.
@@ -205,7 +207,7 @@ Defined.
 Lemma edge_connected_2_refl (X : smash_data) :
    edge_connected_2 X (point B) = idpath.
 Proof.
-  unfold edge_connected_2.
+(*  unfold edge_connected_2. *)
   apply opposite_right_inverse.
 Qed.
 
@@ -241,9 +243,10 @@ apply (@smash_elim_simp _ _ AB (smash CD)
   apply (map _ (pr2 g)).
   apply (contract_1).
 - intro b.
-  rewrite (pr2 f). 
-(*  pathvia (smash_pair CD (point C)(pr1 g b)). *)
-  apply contract_2.
+  pathvia (smash_pair CD (point C)(pr1 g b)).
+  + apply map_twovar_2eq_nondep.
+    apply (pr2 f).
+  + apply contract_2.
 Defined.
 
 Definition smashf : smash AB .-> smash CD.
@@ -251,13 +254,17 @@ exists smashf_carrier.
 unfold smashf_carrier.
 change (point (smash AB)) with 
      (smash_pair AB (point A) (point B)).
-rewrite smash_elim_simp_pair.
-change (point (smash CD)) with
+(*rewrite smash_elim_simp_pair.*)
+pathvia (smash_pair CD (pr1 f (point A))(pr1 g (point B))).
+About smash_elim_simp_pair.
+- simpl. apply ( smash_elim_simp_pair AB (Y:=smash CD)
+      (f:=fun a b => smash_pair CD (pr1 f a) (pr1 g b))).
+- change (point (smash CD)) with
      (smash_pair CD (point C) (point D)).
-pathvia (smash_pair CD (pr1 f (point A)) (point D)).
-apply (map _ (pr2 g)).
-rewrite (pr2 f).
-reflexivity.
+  pathvia (smash_pair CD (pr1 f (point A)) (point D)).
+  + apply (map _ (pr2 g)).
+  + apply map_twovar_2eq_nondep.
+    apply (pr2 f).
 Defined.
 
 (* need functorial properties *)
