@@ -261,6 +261,7 @@ About smash_elim_simp_pair.
       (f:=fun a b => smash_pair CD (pr1 f a) (pr1 g b))).
 - change (point (smash CD)) with
      (smash_pair CD (point C) (point D)).
+  Check @map_twovar.
   pathvia (smash_pair CD (pr1 f (point A)) (point D)).
   + apply (map _ (pr2 g)).
   + apply map_twovar_2eq_nondep.

@@ -1,6 +1,6 @@
 Set Implicit Arguments.
 Unset Strict Implicit.
-Set Printing Implicit Defensive.
+Unset Printing Implicit Defensive.
 Require Import HoTT.Homotopy.
 Require Import ExtensionalityAxiom.
 Require Import pointed_spaces.
@@ -47,7 +47,7 @@ Variable f : smash AB .-> C.
 
 Definition curry_carrier (a : A) : B .-> C.
  exists (fun b => f (smash_pair _ a b)).
- apply (concat (y:=f (smash_pair _ (point A)(point B)))).
+ pathvia (f (smash_pair _ (point A)(point B))).
  - apply (map f (edge_connected_1 _ _ )).
  - apply (pr2 f).
 Defined.
@@ -63,35 +63,40 @@ simpl.
 Defined.
 
 Definition smash_curry : A .-> (pt_map_pt B  C).
-exists curry_carrier.
+exists curry_carrier. simpl.
 apply (total_path (p:=smash_curry_pr1)).
 (*Check pr2 (curry_carrier (point A)).
 rewrite transport_happly. *)
 pathvia (! happly smash_curry_pr1 (point B) @ 
             pr2 (curry_carrier (point A))).
-apply transport_happly.
-unfold smash_curry_pr1. 
-rewrite strong_funext_compute.
-(* 
-rewrite edge_connected_2_refl.
-simpl.
++ apply transport_happly.
+
++ unfold smash_curry_pr1. 
+(* rewrite strong_funext_compute.
 *)
-pathvia (! (pr2 f) @ map f (edge_connected_1 AB (point A)) @ pr2 f).
-- apply whisker_right.
+  pathvia (opposite (map f (edge_connected_2 AB (point B)) @ pr2 f) @
+     pr2 (curry_carrier (point A))).
+  - apply whisker_right.
   apply map.
-  change (pr2 f) with (idpath @ pr2 f) at 2.
-  apply whisker_right.
-  simpl.
-  change (idpath _ ) with
+  apply (strong_funext_compute strong_funext B C
+            (fun b : B => f (smash_pair _ (point A) b ))
+           (fun _ : B => point C)).
+  - simpl.
+    pathvia (! (pr2 f) @ map f (edge_connected_1 AB (point A)) @ pr2 f).
+    * apply whisker_right.
+      apply map.
+      change (pr2 f) with (idpath @ pr2 f) at 2.
+      apply whisker_right.
+      simpl.
+      change (idpath _ ) with
           (map f (idpath (smash_pair AB (point A)(point B)) )).
-  apply map. apply edge_connected_2_refl.
-- simpl. 
-  pathvia (! (pr2 f) @ pr2 f).
-  apply whisker_left.
-  change (pr2 f) with (map f (idpath _) @ pr2 f) at 2.
-  apply whisker_right.
-  apply map. apply edge_connected_1_refl.
-  apply opposite_left_inverse.
+      apply map. apply edge_connected_2_refl.
+    * pathvia (! (pr2 f) @ pr2 f).
+      { apply whisker_left.
+        change (pr2 f) with (map f (idpath _) @ pr2 f) at 2.
+        apply whisker_right.
+        apply map. apply edge_connected_1_refl.
+      }  apply opposite_left_inverse.
 Defined. 
 
 End into_hom_from_out_of_smash.
@@ -147,14 +152,37 @@ Proof.
   simpl.
 Check smash_elim.
   intro x.
+(*  destruct f as [ f' p].*)
+  simpl.
   apply (@smash_elim A B AB (fun x =>  
              out_of_smash_carrier (smash_curry f) x = pr1 f x)
         uncurry_after_curry_pair
         uncurry_after_curry_base_1
         uncurry_after_curry_base_2). 
   intro a.
-  unfold uncurry_after_curry_base_1.
+  unfold uncurry_after_curry_base_1. 
   unfold uncurry_after_curry_pair.
+  simpl. 
+  rewrite constmap_map.
+  rewrite <- compose_map.
+  rewrite idpath_map.
+  rewrite <- opposite_map.
+  rewrite <- concat_map.
+  rewrite <- smash_comp_contract_1.
+  rewrite contract_1_refl.
+  destruct f as [f'  p]. simpl.
+    
+  
+
+  unfold smash_elim_simp_pair.
+  destruct f as [f' p].
+  simpl in *.
+  elim p.
+  simpl.
+  
+  rewrite transport_happly.
+  rewrite smash_comp_base_1.
+  
   simpl.
   
   apply 
