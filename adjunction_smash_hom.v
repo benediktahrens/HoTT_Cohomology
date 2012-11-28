@@ -17,26 +17,34 @@ Variable AB : smash_data A B.
 
 Section out_of_smash_from_into_hom.
 
-Variable f : A .-> (pt_map_pt B C).
+Variable g : A .-> (pt_map_pt B C).
 
 Definition out_of_smash_carrier : smash AB -> C.
 apply (smash_elim_simp 
-        (f:=fun (a : A) (b : B) => (pr1 (f a) b)) 
-        (Ya := point C)
-        (Yb := point C)).
+        (f:=fun (a : A) (b : B) => (pr1 (g a) b)) 
+        (Ya := pr1 (g (point A)) (point B))
+        (Yb := pr1 (g (point A)) (point B))).
 intro a.
-apply (pr2 (f a)).
+pathvia (point C).
+  apply (pr2 (g a)).
+  apply (!pr2 (g (point A))).
+
 intro b.
-apply (happly (base_path (pr2 f))).
+pathvia (point C).
+
+(*  change (point C) with  ((fun _ : B => point C) b). *)
+  apply (happly (base_path (pr2 g))).
+
+  apply (!happly (base_path (pr2 g)) _ ).
 Defined.
 
 Definition smash_uncurry : smash AB .-> C.
 exists out_of_smash_carrier.
 simpl.
 unfold out_of_smash_carrier.
-pathvia (pr1 (f (point A)) (point B)).
+pathvia (pr1 (g (point A)) (point B)).
 apply smash_elim_simp_pair.
-apply (pr2 (f (point A))).
+apply (pr2 (g (point A))).
 Defined.
 
 End out_of_smash_from_into_hom.
